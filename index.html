@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 
-<!-- ПРЕМИУМ ШРИФТ -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://s3.tradingview.com/tv.js"></script>
 
 <style>
 body {
@@ -20,10 +20,8 @@ body {
 h2 {
     font-weight: 700;
     font-size: 22px;
-    margin-bottom: 20px;
 }
 
-/* УБРАЛИ БЕЛЫЙ */
 select {
     width: 90%;
     padding: 14px;
@@ -32,90 +30,39 @@ select {
     border: 1px solid #1f2937;
     background: #111827;
     color: white;
-    font-size: 15px;
-    outline: none;
 }
 
-/* КНОПКА */
 button {
     width: 90%;
     padding: 14px;
-    margin-top: 15px;
     border-radius: 14px;
     border: none;
-    font-size: 16px;
     font-weight: 600;
     background: linear-gradient(90deg, #22c55e, #06b6d4);
     color: white;
     cursor: pointer;
-    transition: 0.2s;
 }
 
-button:hover {
-    transform: scale(1.02);
-}
-
-/* КАРТОЧКА РЕЗУЛЬТАТА */
 .result {
-    margin-top: 25px;
+    margin-top: 20px;
     padding: 20px;
     border-radius: 16px;
     background: rgba(30, 41, 59, 0.6);
-    backdrop-filter: blur(10px);
-    border: 1px solid #1f2937;
 }
 
-.signal {
-    font-size: 22px;
-    font-weight: 700;
-    margin: 10px 0;
-}
+.buy { color: #22c55e; }
+.sell { color: #ef4444; }
 
-.buy {
-    color: #22c55e;
-}
-
-.sell {
-    color: #ef4444;
-}
-
-.confidence {
-    margin-top: 10px;
-    font-size: 16px;
-    opacity: 0.8;
-}
-
-.loading {
-    margin-top: 20px;
-    opacity: 0.7;
-}
 </style>
 </head>
 
 <body>
 
-    <div id="tv_chart" style="height:250px; margin-bottom:15px;"></div>
-
-<script src="https://s3.tradingview.com/tv.js"></script>
-
-<script>
-new TradingView.widget({
-    "container_id": "tv_chart",
-    "width": "100%",
-    "height": 250,
-    "symbol": "FX:EURUSD",
-    "interval": "1",
-    "theme": "dark",
-    "style": "1",
-    "hide_top_toolbar": true,
-    "hide_legend": true,
-    "save_image": false
-});
-</script>
-
 <h2>📊 AI Trading</h2>
 
-<select id="pair">
+<div id="tv_chart" style="height:250px; margin-bottom:15px;"></div>
+
+<select id="pair" onchange="updateChart(this.value)">
     <option>OTC EUR/USD</option>
     <option>OTC GBP/USD</option>
     <option>OTC USD/JPY</option>
@@ -133,11 +80,12 @@ new TradingView.widget({
 
 <button onclick="analyze()">⚡ Получить сигнал</button>
 
-<div id="loading" class="loading"></div>
+<div id="loading"></div>
 <div id="result"></div>
 
 <script>
-    function updateChart(pair) {
+
+function updateChart(pair) {
     let symbol = "FX:EURUSD";
 
     if (pair.includes("GBP")) symbol = "FX:GBPUSD";
@@ -148,57 +96,51 @@ new TradingView.widget({
     document.getElementById("tv_chart").innerHTML = "";
 
     new TradingView.widget({
-        "container_id": "tv_chart",
-        "width": "100%",
-        "height": 250,
-        "symbol": symbol,
-        "interval": "1",
-        "theme": "dark",
-        "style": "1",
-        "hide_top_toolbar": true,
-        "hide_legend": true
+        container_id: "tv_chart",
+        width: "100%",
+        height: 250,
+        symbol: symbol,
+        interval: "1",
+        theme: "dark",
+        style: "1",
+        hide_top_toolbar: true,
+        hide_legend: true
     });
 }
+
 async function analyze() {
-    const pair = document.getElementById("pair").value;
-updateChart(pair);
     const loading = document.getElementById("loading");
     const result = document.getElementById("result");
 
-    result.innerHTML = "";
-    loading.innerHTML = "🤖 AI анализирует рынок...";
+    const pair = document.getElementById("pair").value;
+    const time = document.getElementById("time").value;
 
-    await sleep(700);
+    result.innerHTML = "";
+    loading.innerHTML = "🤖 Анализ...";
+
+    await sleep(800);
     loading.innerHTML = "📊 Анализ тренда...";
-    
-    await sleep(700);
-    loading.innerHTML = "📉 Волатильность...";
-    
-    await sleep(700);
+
+    await sleep(800);
     loading.innerHTML = "🧠 Формирование сигнала...";
 
-    await sleep(700);
+    await sleep(800);
 
     let isBuy = Math.random() > 0.4;
     let direction = isBuy ? "Покупать ↑" : "Продавать ↓";
-    let className = isBuy ? "buy" : "sell";
+    let cls = isBuy ? "buy" : "sell";
 
     let confidence = Math.floor(Math.random() * 21) + 70;
-
-    const pair = document.getElementById("pair").value;
-    const time = document.getElementById("time").value;
 
     loading.innerHTML = "";
 
     result.innerHTML = `
         <div class="result">
             <div>${pair} | ${time}</div>
-
-            <div class="signal ${className}">
+            <div class="${cls}" style="font-size:22px; margin-top:10px;">
                 ${direction}
             </div>
-
-            <div class="confidence">
+            <div style="margin-top:10px;">
                 Уверенность: <b>${confidence}%</b>
             </div>
         </div>
@@ -208,6 +150,10 @@ updateChart(pair);
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+// загрузка графика при старте
+updateChart("OTC EUR/USD");
+
 </script>
 
 </body>
