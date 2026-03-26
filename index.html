@@ -6,6 +6,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+if (!window.Telegram || !Telegram.WebApp.initDataUnsafe.user) {
+    document.body.innerHTML = "<h2 style='color:white'>⛔ Доступ только через Telegram</h2>";
+    throw new Error("No access");
+}
+</script>
 <script src="https://s3.tradingview.com/tv.js"></script>
 
 <style>
