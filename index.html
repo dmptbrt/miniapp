@@ -137,7 +137,31 @@ new TradingView.widget({
 <div id="result"></div>
 
 <script>
+    function updateChart(pair) {
+    let symbol = "FX:EURUSD";
+
+    if (pair.includes("GBP")) symbol = "FX:GBPUSD";
+    if (pair.includes("JPY")) symbol = "FX:USDJPY";
+    if (pair.includes("BTC")) symbol = "BINANCE:BTCUSDT";
+    if (pair.includes("ETH")) symbol = "BINANCE:ETHUSDT";
+
+    document.getElementById("tv_chart").innerHTML = "";
+
+    new TradingView.widget({
+        "container_id": "tv_chart",
+        "width": "100%",
+        "height": 250,
+        "symbol": symbol,
+        "interval": "1",
+        "theme": "dark",
+        "style": "1",
+        "hide_top_toolbar": true,
+        "hide_legend": true
+    });
+}
 async function analyze() {
+    const pair = document.getElementById("pair").value;
+updateChart(pair);
     const loading = document.getElementById("loading");
     const result = document.getElementById("result");
 
