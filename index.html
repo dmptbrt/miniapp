@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+body {
+    background: #0f172a;
+    color: white;
+    font-family: Arial;
+    text-align: center;
+    padding: 20px;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+select, button {
+    width: 90%;
+    padding: 12px;
+    margin: 10px;
+    border-radius: 12px;
+    border: none;
+    font-size: 16px;
+}
+
+button {
+    background: linear-gradient(90deg, #22c55e, #06b6d4);
+    color: white;
+    font-weight: bold;
+}
+
+.result {
+    margin-top: 20px;
+    font-size: 18px;
+    background: #1e293b;
+    padding: 15px;
+    border-radius: 12px;
+}
+
+.loading {
+    margin-top: 20px;
+    font-size: 16px;
+    opacity: 0.8;
+}
+</style>
+</head>
+
+<body>
+
+<h2>📊 AI Trading</h2>
+
+<select id="pair">
+    <option>OTC EUR/USD</option>
+    <option>OTC GBP/USD</option>
+    <option>OTC USD/JPY</option>
+    <option>BTC/USD</option>
+    <option>ETH/USD</option>
+</select>
+
+<select id="time">
+    <option>5s</option>
+    <option>15s</option>
+    <option>30s</option>
+    <option>1m</option>
+    <option>5m</option>
+</select>
+
+<button onclick="analyze()">⚡ Получить сигнал</button>
+
+<div id="loading" class="loading"></div>
+<div class="result" id="result"></div>
+
+<script>
+async function analyze() {
+    const loading = document.getElementById("loading");
+    const resultBox = document.getElementById("result");
+
+    resultBox.innerHTML = "";
+    loading.innerHTML = "🤖 AI анализирует рынок...";
+
+    await sleep(800);
+    loading.innerHTML = "📊 Проверка тренда...";
+    
+    await sleep(800);
+    loading.innerHTML = "📉 Анализ волатильности...";
+    
+    await sleep(800);
+    loading.innerHTML = "🧠 Формирование сигнала...";
+
+    await sleep(800);
+
+    // логика сигнала
+    let direction = Math.random() > 0.4 ? "Покупать 📈" : "Продавать 📉";
+    let confidence = Math.floor(Math.random() * 21) + 70; // 70-90%
+
+    const pair = document.getElementById("pair").value;
+    const time = document.getElementById("time").value;
+
+    loading.innerHTML = "";
+
+    resultBox.innerHTML = `
+        <b>Сигнал сгенерирован</b><br><br>
+        ${pair} | ${time}<br><br>
+
+        <div style="color: #22c55e; font-size:20px;">
+            ${direction}
+        </div><br>
+
+        Уровень уверенности:<br>
+        <b>${confidence}%</b>
+    `;
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+</script>
+
+</body>
+</html>
