@@ -2,53 +2,116 @@
 <html>
 <head>
 <meta charset="UTF-8">
+
+<!-- ПРЕМИУМ ШРИФТ -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 body {
-    background: #0f172a;
+    background: linear-gradient(180deg, #0b1220, #0f172a);
     color: white;
-    font-family: Arial;
+    font-family: 'Inter', sans-serif;
     text-align: center;
     padding: 20px;
 }
 
 h2 {
+    font-weight: 700;
+    font-size: 22px;
     margin-bottom: 20px;
 }
 
-select, button {
+/* УБРАЛИ БЕЛЫЙ */
+select {
     width: 90%;
-    padding: 12px;
+    padding: 14px;
     margin: 10px;
-    border-radius: 12px;
+    border-radius: 14px;
+    border: 1px solid #1f2937;
+    background: #111827;
+    color: white;
+    font-size: 15px;
+    outline: none;
+}
+
+/* КНОПКА */
+button {
+    width: 90%;
+    padding: 14px;
+    margin-top: 15px;
+    border-radius: 14px;
     border: none;
     font-size: 16px;
-}
-
-button {
+    font-weight: 600;
     background: linear-gradient(90deg, #22c55e, #06b6d4);
     color: white;
-    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
+button:hover {
+    transform: scale(1.02);
+}
+
+/* КАРТОЧКА РЕЗУЛЬТАТА */
 .result {
-    margin-top: 20px;
-    font-size: 18px;
-    background: #1e293b;
-    padding: 15px;
-    border-radius: 12px;
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 16px;
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid #1f2937;
+}
+
+.signal {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 10px 0;
+}
+
+.buy {
+    color: #22c55e;
+}
+
+.sell {
+    color: #ef4444;
+}
+
+.confidence {
+    margin-top: 10px;
+    font-size: 16px;
+    opacity: 0.8;
 }
 
 .loading {
     margin-top: 20px;
-    font-size: 16px;
-    opacity: 0.8;
+    opacity: 0.7;
 }
 </style>
 </head>
 
 <body>
+
+    <div id="tv_chart" style="height:250px; margin-bottom:15px;"></div>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+
+<script>
+new TradingView.widget({
+    "container_id": "tv_chart",
+    "width": "100%",
+    "height": 250,
+    "symbol": "FX:EURUSD",
+    "interval": "1",
+    "theme": "dark",
+    "style": "1",
+    "hide_top_toolbar": true,
+    "hide_legend": true,
+    "save_image": false
+});
+</script>
 
 <h2>📊 AI Trading</h2>
 
@@ -71,46 +134,50 @@ button {
 <button onclick="analyze()">⚡ Получить сигнал</button>
 
 <div id="loading" class="loading"></div>
-<div class="result" id="result"></div>
+<div id="result"></div>
 
 <script>
 async function analyze() {
     const loading = document.getElementById("loading");
-    const resultBox = document.getElementById("result");
+    const result = document.getElementById("result");
 
-    resultBox.innerHTML = "";
+    result.innerHTML = "";
     loading.innerHTML = "🤖 AI анализирует рынок...";
 
-    await sleep(800);
-    loading.innerHTML = "📊 Проверка тренда...";
+    await sleep(700);
+    loading.innerHTML = "📊 Анализ тренда...";
     
-    await sleep(800);
-    loading.innerHTML = "📉 Анализ волатильности...";
+    await sleep(700);
+    loading.innerHTML = "📉 Волатильность...";
     
-    await sleep(800);
+    await sleep(700);
     loading.innerHTML = "🧠 Формирование сигнала...";
 
-    await sleep(800);
+    await sleep(700);
 
-    // логика сигнала
-    let direction = Math.random() > 0.4 ? "Покупать 📈" : "Продавать 📉";
-    let confidence = Math.floor(Math.random() * 21) + 70; // 70-90%
+    let isBuy = Math.random() > 0.4;
+    let direction = isBuy ? "Покупать ↑" : "Продавать ↓";
+    let className = isBuy ? "buy" : "sell";
+
+    let confidence = Math.floor(Math.random() * 21) + 70;
 
     const pair = document.getElementById("pair").value;
     const time = document.getElementById("time").value;
 
     loading.innerHTML = "";
 
-    resultBox.innerHTML = `
-        <b>Сигнал сгенерирован</b><br><br>
-        ${pair} | ${time}<br><br>
+    result.innerHTML = `
+        <div class="result">
+            <div>${pair} | ${time}</div>
 
-        <div style="color: #22c55e; font-size:20px;">
-            ${direction}
-        </div><br>
+            <div class="signal ${className}">
+                ${direction}
+            </div>
 
-        Уровень уверенности:<br>
-        <b>${confidence}%</b>
+            <div class="confidence">
+                Уверенность: <b>${confidence}%</b>
+            </div>
+        </div>
     `;
 }
 
